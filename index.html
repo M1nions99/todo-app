@@ -35,7 +35,8 @@
       font-size: 13px; font-family: inherit; color: var(--text); outline: none; background: #fff; }
     .row2 input:focus, .row2 select:focus { border-color: var(--accent); }
     #dateInput { flex: 1.4; min-width: 128px; } #timeInput { flex: 1; min-width: 90px; }
-    #prioInput, #repeatInput { flex: 1; min-width: 88px; cursor: pointer; }
+    #prioInput { flex: 1; min-width: 92px; cursor: pointer; }
+    #repeatInput { flex: 1.2; min-width: 116px; cursor: pointer; }
 
     .filters { display: flex; gap: 6px; padding: 8px 22px 2px; }
     .filter { border: none; background: transparent; color: var(--muted); font-size: 13px; font-weight: 600;
@@ -51,6 +52,9 @@
     ul#list { list-style: none; padding: 6px 14px 6px; min-height: 80px; }
     .group-header { font-size: 12.5px; font-weight: 800; color: var(--muted); padding: 14px 10px 6px; }
     .group-header.today { color: var(--accent); } .group-header.past { color: var(--danger); }
+    .group-header.pinned { color: var(--repeat); }
+    .chip.date { color: #4a5170; }
+    .chip.date.past { color: var(--danger); background: #fff0f3; }
 
     li.task { display: flex; align-items: flex-start; gap: 11px; padding: 11px 12px; border-radius: 12px;
       border-left: 3px solid transparent; transition: background 0.12s; }
@@ -107,10 +111,10 @@
           <option value="normal" selected>⬤ 보통</option>
           <option value="low">⬤ 낮음</option>
         </select>
-        <select id="repeatInput" title="반복">
-          <option value="none" selected>🔁 반복 없음</option>
-          <option value="daily">🔁 매일</option>
-          <option value="weekly">🔁 매주</option>
+        <select id="repeatInput" title="반복 여부">
+          <option value="none" selected>반복 안 함</option>
+          <option value="daily">매일 반복</option>
+          <option value="weekly">매주 반복</option>
         </select>
       </div>
     </div>
@@ -218,6 +222,53 @@
       return PRIO_RANK[a.priority] - PRIO_RANK[b.priority];
     }
 
+    function fmtShort(dateStr) {
+      if (!dateStr) return "날짜 미정";
+      const today = new Date(); today.setHours(0,0,0,0);
+      const d = new Date(dateStr + "T00:00:00");
+      const diff = Math.round((d - today) / 86400000);
+      if (diff === 0) return "오늘";
+      if (diff === 1) return "내일";
+      if (diff === -1) return "어제";
+      return (d.getMonth()+1) + "/" + d.getDate() + " (" + WEEK[d.getDay()] + ")";
+    }
+
+    function addHeader(text, cls) {
+      const h = document.createElement("li");
+      h.className = "group-header" + (cls ? " " + cls : "");
+      h.textContent = text;
+      $list.appendChild(h);
+    }
+
+    function makeTaskLi(t, showDate) {
+      const li = document.createElement("li");
+      li.className = "task prio-" + t.priority + (t.done ? " completed" : "");
+      const check = document.createElement("div");
+      check.className = "check" + (t.done ? " on" : "");
+      check.onclick = () => toggle(t.id);
+      const content = document.createElement("div");
+      content.className = "content";
+      const label = document.createElement("div");
+      label.className = "label"; label.textContent = t.text; label.onclick = () => toggle(t.id);
+      content.appendChild(label);
+      const meta = document.createElement("div"); meta.className = "meta";
+      if (showDate) {
+        const dc = document.createElement("span");
+        dc.className = "chip date" + (isOverdue(t) ? " past" : "");
+        dc.textContent = "📅 " + fmtShort(t.date);
+        meta.appendChild(dc);
+      }
+      if (t.time) { const c = document.createElement("span"); c.className = "chip time"; c.textContent = "🕒 " + t.time; meta.appendChild(c); }
+      const pt = document.createElement("span"); pt.className = "prio-tag " + t.priority; pt.textContent = PRIO_LABEL[t.priority]; meta.appendChild(pt);
+      if (t.repeat && t.repeat !== "none") { const rt = document.createElement("span"); rt.className = "rep-tag"; rt.textContent = REPEAT_LABEL[t.repeat]; meta.appendChild(rt); }
+      if (isOverdue(t)) { const late = document.createElement("span"); late.className = "late"; late.textContent = "지남"; meta.appendChild(late); }
+      content.appendChild(meta);
+      const del = document.createElement("button");
+      del.className = "del"; del.innerHTML = "&times;"; del.title = "삭제"; del.onclick = () => remove(t.id);
+      li.append(check, content, del);
+      return li;
+    }
+
     function render() {
       const shown = tasks
         .filter(t => filter === "all" ? true : filter === "done" ? t.done : !t.done)
@@ -230,36 +281,22 @@
           : tasks.length === 0 ? "할 일을 추가해 계획을 세워 보세요 🗓️" : "표시할 일이 없어요.";
         $list.appendChild(li);
       } else {
+        const recurring = shown.filter(t => t.repeat && t.repeat !== "none");
+        const oneoff = shown.filter(t => !t.repeat || t.repeat === "none");
+        // 🔁 반복 일정 — 항상 맨 위에 고정
+        if (recurring.length) {
+          addHeader("🔁 반복 일정", "pinned");
+          recurring.forEach(t => $list.appendChild(makeTaskLi(t, true)));
+        }
+        // 그 외 일정 — 날짜별 그룹으로 정리
         let curKey = null;
-        shown.forEach(t => {
+        oneoff.forEach(t => {
           const info = dateInfo(t.date);
           if (info.key !== curKey) {
             curKey = info.key;
-            const h = document.createElement("li");
-            h.className = "group-header" + (info.today ? " today" : "") + (info.past ? " past" : "");
-            h.textContent = info.label;
-            $list.appendChild(h);
+            addHeader(info.label, (info.today ? "today" : "") + (info.past ? " past" : ""));
           }
-          const li = document.createElement("li");
-          li.className = "task prio-" + t.priority + (t.done ? " completed" : "");
-          const check = document.createElement("div");
-          check.className = "check" + (t.done ? " on" : "");
-          check.onclick = () => toggle(t.id);
-          const content = document.createElement("div");
-          content.className = "content";
-          const label = document.createElement("div");
-          label.className = "label"; label.textContent = t.text; label.onclick = () => toggle(t.id);
-          content.appendChild(label);
-          const meta = document.createElement("div"); meta.className = "meta";
-          if (t.time) { const c = document.createElement("span"); c.className = "chip time"; c.textContent = "🕒 " + t.time; meta.appendChild(c); }
-          const pt = document.createElement("span"); pt.className = "prio-tag " + t.priority; pt.textContent = PRIO_LABEL[t.priority]; meta.appendChild(pt);
-          if (t.repeat && t.repeat !== "none") { const rt = document.createElement("span"); rt.className = "rep-tag"; rt.textContent = REPEAT_LABEL[t.repeat]; meta.appendChild(rt); }
-          if (isOverdue(t)) { const late = document.createElement("span"); late.className = "late"; late.textContent = "지남"; meta.appendChild(late); }
-          content.appendChild(meta);
-          const del = document.createElement("button");
-          del.className = "del"; del.innerHTML = "&times;"; del.title = "삭제"; del.onclick = () => remove(t.id);
-          li.append(check, content, del);
-          $list.appendChild(li);
+          $list.appendChild(makeTaskLi(t, false));
         });
       }
       const left = tasks.filter(t => !t.done).length;
