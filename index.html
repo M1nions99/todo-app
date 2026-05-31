@@ -6,147 +6,84 @@
   <title>오늘 할 일 ✓ 플래너</title>
   <style>
     :root {
-      --bg1: #6a8dff;
-      --bg2: #8f5cff;
-      --card: #ffffff;
-      --text: #1f2440;
-      --muted: #8a90a8;
-      --line: #eef0f6;
-      --accent: #6a8dff;
-      --danger: #ff5c7a;
-      --done: #b6bccd;
-      --high: #ff5c7a;
-      --normal: #6a8dff;
-      --low: #22b07d;
+      --bg1: #6a8dff; --bg2: #8f5cff; --card: #fff; --text: #1f2440;
+      --muted: #8a90a8; --line: #eef0f6; --accent: #6a8dff; --danger: #ff5c7a;
+      --done: #b6bccd; --high: #ff5c7a; --normal: #6a8dff; --low: #22b07d; --repeat: #9b5cff;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: "Pretendard", "맑은 고딕", "Apple SD Gothic Neo", "Segoe UI", sans-serif;
-      min-height: 100vh;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 40px 16px;
-      background: linear-gradient(135deg, var(--bg1), var(--bg2));
-      color: var(--text);
+      min-height: 100vh; display: flex; align-items: flex-start; justify-content: center;
+      padding: 40px 16px; background: linear-gradient(135deg, var(--bg1), var(--bg2)); color: var(--text);
     }
-    .app {
-      width: 100%;
-      max-width: 500px;
-      background: var(--card);
-      border-radius: 20px;
-      box-shadow: 0 24px 60px rgba(40, 30, 90, 0.28);
-      overflow: hidden;
-    }
-    header {
-      padding: 26px 28px 20px;
-      background: linear-gradient(135deg, var(--bg1), var(--bg2));
-      color: #fff;
-    }
+    .app { width: 100%; max-width: 500px; background: var(--card); border-radius: 20px;
+      box-shadow: 0 24px 60px rgba(40,30,90,0.28); overflow: hidden; }
+    header { padding: 26px 28px 20px; background: linear-gradient(135deg, var(--bg1), var(--bg2)); color: #fff; }
     header h1 { font-size: 23px; font-weight: 800; letter-spacing: -0.5px; }
     header p { margin-top: 6px; font-size: 13px; opacity: 0.88; }
 
-    .form { padding: 18px 22px 10px; }
+    .form { padding: 18px 22px 8px; }
     .row1 { display: flex; gap: 8px; }
-    #taskInput {
-      flex: 1;
-      border: 2px solid var(--line);
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-size: 15px;
-      outline: none;
-      transition: border-color 0.15s;
-      font-family: inherit;
-    }
+    #taskInput { flex: 1; border: 2px solid var(--line); border-radius: 12px; padding: 12px 14px;
+      font-size: 15px; outline: none; transition: border-color 0.15s; font-family: inherit; }
     #taskInput:focus { border-color: var(--accent); }
-    #addBtn {
-      border: none; background: var(--accent); color: #fff;
-      font-size: 15px; font-weight: 700; padding: 0 20px;
-      border-radius: 12px; cursor: pointer; transition: opacity 0.15s, transform 0.08s;
-    }
-    #addBtn:hover { opacity: 0.9; }
-    #addBtn:active { transform: scale(0.96); }
+    #addBtn { border: none; background: var(--accent); color: #fff; font-size: 15px; font-weight: 700;
+      padding: 0 20px; border-radius: 12px; cursor: pointer; transition: opacity 0.15s, transform 0.08s; }
+    #addBtn:hover { opacity: 0.9; } #addBtn:active { transform: scale(0.96); }
     .row2 { display: flex; gap: 8px; margin-top: 9px; flex-wrap: wrap; }
-    .row2 input, .row2 select {
-      border: 2px solid var(--line); border-radius: 10px;
-      padding: 9px 10px; font-size: 13px; font-family: inherit;
-      color: var(--text); outline: none; background: #fff;
-    }
+    .row2 input, .row2 select { border: 2px solid var(--line); border-radius: 10px; padding: 9px 10px;
+      font-size: 13px; font-family: inherit; color: var(--text); outline: none; background: #fff; }
     .row2 input:focus, .row2 select:focus { border-color: var(--accent); }
-    #dateInput { flex: 1.4; min-width: 130px; }
-    #timeInput { flex: 1; min-width: 92px; }
-    #prioInput { flex: 1; min-width: 90px; cursor: pointer; }
+    #dateInput { flex: 1.4; min-width: 128px; } #timeInput { flex: 1; min-width: 90px; }
+    #prioInput, #repeatInput { flex: 1; min-width: 88px; cursor: pointer; }
 
-    .filters { display: flex; gap: 6px; padding: 6px 22px 4px; }
-    .filter {
-      border: none; background: transparent; color: var(--muted);
-      font-size: 13px; font-weight: 600; padding: 7px 13px;
-      border-radius: 20px; cursor: pointer; font-family: inherit;
-    }
+    .filters { display: flex; gap: 6px; padding: 8px 22px 2px; }
+    .filter { border: none; background: transparent; color: var(--muted); font-size: 13px; font-weight: 600;
+      padding: 7px 13px; border-radius: 20px; cursor: pointer; font-family: inherit; }
     .filter.active { background: #eef1ff; color: var(--accent); }
 
-    ul#list { list-style: none; padding: 4px 14px 6px; min-height: 90px; }
-    .group-header {
-      font-size: 12.5px; font-weight: 800; color: var(--muted);
-      padding: 14px 10px 6px; letter-spacing: 0.2px;
-    }
-    .group-header.today { color: var(--accent); }
-    .group-header.past { color: var(--danger); }
+    .toolbar { display: flex; gap: 6px; padding: 4px 22px 2px; flex-wrap: wrap; }
+    .toolbar button { border: 1.5px solid var(--line); background: #fff; color: var(--muted);
+      font-size: 12.5px; font-weight: 600; padding: 6px 11px; border-radius: 18px; cursor: pointer; font-family: inherit; }
+    .toolbar button:hover { border-color: var(--accent); color: var(--accent); }
+    .toolbar button.on { background: #eef1ff; border-color: var(--accent); color: var(--accent); }
 
-    li.task {
-      display: flex; align-items: flex-start; gap: 11px;
-      padding: 11px 12px; border-radius: 12px;
-      border-left: 3px solid transparent; transition: background 0.12s;
-    }
+    ul#list { list-style: none; padding: 6px 14px 6px; min-height: 80px; }
+    .group-header { font-size: 12.5px; font-weight: 800; color: var(--muted); padding: 14px 10px 6px; }
+    .group-header.today { color: var(--accent); } .group-header.past { color: var(--danger); }
+
+    li.task { display: flex; align-items: flex-start; gap: 11px; padding: 11px 12px; border-radius: 12px;
+      border-left: 3px solid transparent; transition: background 0.12s; }
     li.task:hover { background: #f7f8fc; }
     li.task.prio-high { border-left-color: var(--high); }
     li.task.prio-normal { border-left-color: var(--normal); }
     li.task.prio-low { border-left-color: var(--low); }
-
-    .check {
-      width: 21px; height: 21px; margin-top: 1px;
-      border: 2px solid #cfd4e6; border-radius: 7px; cursor: pointer;
-      flex-shrink: 0; display: grid; place-items: center; transition: all 0.15s;
-    }
+    .check { width: 21px; height: 21px; margin-top: 1px; border: 2px solid #cfd4e6; border-radius: 7px;
+      cursor: pointer; flex-shrink: 0; display: grid; place-items: center; transition: all 0.15s; }
     .check.on { background: var(--accent); border-color: var(--accent); }
     .check.on::after { content: "✓"; color: #fff; font-size: 12px; font-weight: 900; }
-
     .content { flex: 1; min-width: 0; }
     .label { font-size: 15px; word-break: break-word; cursor: pointer; line-height: 1.35; }
     .meta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-    .chip {
-      font-size: 12px; color: var(--muted); background: #f1f3f9;
-      padding: 2px 8px; border-radius: 20px; font-weight: 600;
-    }
+    .chip { font-size: 12px; color: var(--muted); background: #f1f3f9; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
     .chip.time { color: #4a5170; }
     .prio-tag { font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
     .prio-tag.high { color: var(--high); background: #ffeef2; }
     .prio-tag.normal { color: var(--normal); background: #eef1ff; }
     .prio-tag.low { color: var(--low); background: #e7f7f0; }
+    .rep-tag { font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 20px; color: var(--repeat); background: #f1e9ff; }
     .late { color: #fff; background: var(--danger); font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
-
     li.task.completed .label { color: var(--done); text-decoration: line-through; }
-    li.task.completed .chip, li.task.completed .prio-tag { opacity: 0.5; }
-
-    .del {
-      border: none; background: transparent; color: #cfd4e6;
-      font-size: 20px; cursor: pointer; padding: 0 4px; border-radius: 8px;
-      line-height: 1; margin-top: 1px; transition: color 0.15s, background 0.15s;
-    }
+    li.task.completed .chip, li.task.completed .prio-tag, li.task.completed .rep-tag { opacity: 0.5; }
+    .del { border: none; background: transparent; color: #cfd4e6; font-size: 20px; cursor: pointer;
+      padding: 0 4px; border-radius: 8px; line-height: 1; margin-top: 1px; transition: color 0.15s, background 0.15s; }
     .del:hover { color: var(--danger); background: #fff0f3; }
-
-    .empty { text-align: center; color: var(--muted); font-size: 14px; padding: 32px 0; }
-    footer {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 24px 22px; font-size: 13px; color: var(--muted);
-      border-top: 1px solid var(--line); margin-top: 4px;
-    }
-    #count b { color: var(--text); }
-    #count .od { color: var(--danger); }
-    #clearDone {
-      border: none; background: transparent; color: var(--muted);
-      font-size: 13px; cursor: pointer; font-family: inherit; text-decoration: underline;
-    }
+    .empty { text-align: center; color: var(--muted); font-size: 14px; padding: 30px 0; }
+    footer { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px 22px;
+      font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); margin-top: 4px; }
+    #count b { color: var(--text); } #count .od { color: var(--danger); }
+    #clearDone { border: none; background: transparent; color: var(--muted); font-size: 13px; cursor: pointer;
+      font-family: inherit; text-decoration: underline; }
     #clearDone:hover { color: var(--danger); }
   </style>
 </head>
@@ -154,7 +91,7 @@
   <main class="app">
     <header>
       <h1>오늘 할 일 ✓ 플래너</h1>
-      <p>마감 날짜·시간·우선순위까지 정하면, 마감이 임박한 순서로 정리돼요.</p>
+      <p>마감 날짜·시간·우선순위·반복까지 정하면, 마감 임박 순으로 정리돼요.</p>
     </header>
 
     <div class="form">
@@ -170,6 +107,11 @@
           <option value="normal" selected>⬤ 보통</option>
           <option value="low">⬤ 낮음</option>
         </select>
+        <select id="repeatInput" title="반복">
+          <option value="none" selected>🔁 반복 없음</option>
+          <option value="daily">🔁 매일</option>
+          <option value="weekly">🔁 매주</option>
+        </select>
       </div>
     </div>
 
@@ -177,6 +119,13 @@
       <button class="filter active" data-filter="all">전체</button>
       <button class="filter" data-filter="active">진행 중</button>
       <button class="filter" data-filter="done">완료</button>
+    </div>
+
+    <div class="toolbar">
+      <button id="notifBtn" title="마감 시간 알림 켜기">🔔 알림 켜기</button>
+      <button id="exportBtn" title="백업 파일로 내보내기">⬇ 내보내기</button>
+      <button id="importBtn" title="백업 파일 가져오기">⬆ 가져오기</button>
+      <input id="importFile" type="file" accept="application/json,.json" hidden />
     </div>
 
     <ul id="list"></ul>
@@ -192,39 +141,54 @@
     let tasks = JSON.parse(localStorage.getItem(KEY) || "[]");
     let filter = "all";
 
-    const WEEK = ["일", "월", "화", "수", "목", "금", "토"];
+    const WEEK = ["일","월","화","수","목","금","토"];
     const PRIO_RANK = { high: 0, normal: 1, low: 2 };
     const PRIO_LABEL = { high: "높음", normal: "보통", low: "낮음" };
+    const REPEAT_LABEL = { daily: "🔁 매일", weekly: "🔁 매주" };
 
     const $list = document.getElementById("list");
     const $input = document.getElementById("taskInput");
     const $date = document.getElementById("dateInput");
     const $time = document.getElementById("timeInput");
     const $prio = document.getElementById("prioInput");
+    const $repeat = document.getElementById("repeatInput");
     const $count = document.getElementById("count");
 
     function save() { localStorage.setItem(KEY, JSON.stringify(tasks)); }
+    function newId() { return Date.now() + Math.floor(Math.random() * 100000); }
+    function pad(n) { return String(n).padStart(2, "0"); }
+    function fmt(d) { return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate()); }
+    function todayStr() { return fmt(new Date()); }
+    function nextDate(dateStr, repeat) {
+      const d = new Date(dateStr + "T00:00:00");
+      d.setDate(d.getDate() + (repeat === "daily" ? 1 : 7));
+      return fmt(d);
+    }
 
     function addTask() {
       const text = $input.value.trim();
       if (!text) { $input.focus(); return; }
       tasks.push({
-        id: Date.now() + Math.floor(Math.random() * 1000),
-        text,
-        date: $date.value || "",
-        time: $time.value || "",
-        priority: $prio.value || "normal",
-        done: false,
+        id: newId(), text, date: $date.value || "", time: $time.value || "",
+        priority: $prio.value || "normal", repeat: $repeat.value || "none",
+        done: false, notified: false, spawned: false,
       });
-      $input.value = "";
-      $time.value = "";      // 같은 날 여러 건 빠르게 추가하도록 날짜·우선순위는 유지
-      save(); render();
-      $input.focus();
+      $input.value = ""; $time.value = "";   // 같은 날 여러 건 빠르게 추가하도록 날짜·우선순위·반복은 유지
+      save(); render(); $input.focus();
     }
 
     function toggle(id) {
       const t = tasks.find(t => t.id === id);
-      if (t) t.done = !t.done;
+      if (!t) return;
+      t.done = !t.done;
+      // 반복 일정을 완료하면 다음 일정을 자동 생성 (중복 방지)
+      if (t.done && t.repeat && t.repeat !== "none" && t.date && !t.spawned) {
+        t.spawned = true;
+        tasks.push({
+          id: newId(), text: t.text, date: nextDate(t.date, t.repeat), time: t.time,
+          priority: t.priority, repeat: t.repeat, done: false, notified: false, spawned: false,
+        });
+      }
       save(); render();
     }
     function remove(id) { tasks = tasks.filter(t => t.id !== id); save(); render(); }
@@ -232,26 +196,20 @@
 
     function isOverdue(t) {
       if (t.done || !t.date) return false;
-      const due = new Date(t.date + "T" + (t.time || "23:59"));
-      return due < new Date();
+      return new Date(t.date + "T" + (t.time || "23:59")) < new Date();
     }
-
     function dateInfo(dateStr) {
       if (!dateStr) return { key: "none", label: "📌 날짜 미정", past: false, today: false };
-      const today = new Date(); today.setHours(0, 0, 0, 0);
+      const today = new Date(); today.setHours(0,0,0,0);
       const d = new Date(dateStr + "T00:00:00");
       const diff = Math.round((d - today) / 86400000);
-      const md = (d.getMonth() + 1) + "월 " + d.getDate() + "일";
-      const wd = "(" + WEEK[d.getDay()] + ")";
-      let prefix = "";
-      if (diff === 0) prefix = "오늘 · ";
-      else if (diff === 1) prefix = "내일 · ";
-      else if (diff === -1) prefix = "어제 · ";
-      else if (diff < -1) prefix = Math.abs(diff) + "일 지남 · ";
-      else if (diff <= 7) prefix = diff + "일 뒤 · ";
-      return { key: dateStr, label: prefix + md + " " + wd, past: diff < 0, today: diff === 0 };
+      const md = (d.getMonth()+1) + "월 " + d.getDate() + "일", wd = "(" + WEEK[d.getDay()] + ")";
+      let pre = "";
+      if (diff === 0) pre = "오늘 · "; else if (diff === 1) pre = "내일 · ";
+      else if (diff === -1) pre = "어제 · "; else if (diff < -1) pre = Math.abs(diff) + "일 지남 · ";
+      else if (diff <= 7) pre = diff + "일 뒤 · ";
+      return { key: dateStr, label: pre + md + " " + wd, past: diff < 0, today: diff === 0 };
     }
-
     function sortTasks(a, b) {
       const ad = a.date || "9999-99-99", bd = b.date || "9999-99-99";
       if (ad !== bd) return ad < bd ? -1 : 1;
@@ -264,15 +222,12 @@
       const shown = tasks
         .filter(t => filter === "all" ? true : filter === "done" ? t.done : !t.done)
         .sort(sortTasks);
-
       $list.innerHTML = "";
-
       if (shown.length === 0) {
         const li = document.createElement("li");
         li.className = "empty";
         li.textContent = filter === "done" ? "완료한 일이 아직 없어요."
-          : tasks.length === 0 ? "할 일을 추가해 계획을 세워 보세요 🗓️"
-          : "표시할 일이 없어요.";
+          : tasks.length === 0 ? "할 일을 추가해 계획을 세워 보세요 🗓️" : "표시할 일이 없어요.";
         $list.appendChild(li);
       } else {
         let curKey = null;
@@ -285,72 +240,108 @@
             h.textContent = info.label;
             $list.appendChild(h);
           }
-
           const li = document.createElement("li");
           li.className = "task prio-" + t.priority + (t.done ? " completed" : "");
-
           const check = document.createElement("div");
           check.className = "check" + (t.done ? " on" : "");
           check.onclick = () => toggle(t.id);
-
           const content = document.createElement("div");
           content.className = "content";
-
           const label = document.createElement("div");
-          label.className = "label";
-          label.textContent = t.text;
-          label.onclick = () => toggle(t.id);
+          label.className = "label"; label.textContent = t.text; label.onclick = () => toggle(t.id);
           content.appendChild(label);
-
-          const meta = document.createElement("div");
-          meta.className = "meta";
-          if (t.time) {
-            const c = document.createElement("span");
-            c.className = "chip time";
-            c.textContent = "🕒 " + t.time;
-            meta.appendChild(c);
-          }
-          const pt = document.createElement("span");
-          pt.className = "prio-tag " + t.priority;
-          pt.textContent = PRIO_LABEL[t.priority];
-          meta.appendChild(pt);
-          if (isOverdue(t)) {
-            const late = document.createElement("span");
-            late.className = "late";
-            late.textContent = "지남";
-            meta.appendChild(late);
-          }
+          const meta = document.createElement("div"); meta.className = "meta";
+          if (t.time) { const c = document.createElement("span"); c.className = "chip time"; c.textContent = "🕒 " + t.time; meta.appendChild(c); }
+          const pt = document.createElement("span"); pt.className = "prio-tag " + t.priority; pt.textContent = PRIO_LABEL[t.priority]; meta.appendChild(pt);
+          if (t.repeat && t.repeat !== "none") { const rt = document.createElement("span"); rt.className = "rep-tag"; rt.textContent = REPEAT_LABEL[t.repeat]; meta.appendChild(rt); }
+          if (isOverdue(t)) { const late = document.createElement("span"); late.className = "late"; late.textContent = "지남"; meta.appendChild(late); }
           content.appendChild(meta);
-
           const del = document.createElement("button");
-          del.className = "del";
-          del.innerHTML = "&times;";
-          del.title = "삭제";
-          del.onclick = () => remove(t.id);
-
+          del.className = "del"; del.innerHTML = "&times;"; del.title = "삭제"; del.onclick = () => remove(t.id);
           li.append(check, content, del);
           $list.appendChild(li);
         });
       }
-
       const left = tasks.filter(t => !t.done).length;
       const overdue = tasks.filter(t => isOverdue(t)).length;
-      $count.innerHTML = "<b>" + left + "</b>개 남음" +
-        (overdue ? " · <span class='od'>지난 일정 " + overdue + "개</span>" : "");
+      $count.innerHTML = "<b>" + left + "</b>개 남음" + (overdue ? " · <span class='od'>지난 일정 " + overdue + "개</span>" : "");
+    }
+
+    /* ---------- 🔔 마감 알림 ---------- */
+    let notifTimer = null;
+    function updateNotifBtn() {
+      const b = document.getElementById("notifBtn");
+      if (("Notification" in window) && Notification.permission === "granted") { b.textContent = "🔔 알림 켜짐"; b.classList.add("on"); }
+      else { b.textContent = "🔔 알림 켜기"; b.classList.remove("on"); }
+    }
+    function startNotifLoop() {
+      if (notifTimer) clearInterval(notifTimer);
+      checkDue(); notifTimer = setInterval(checkDue, 30000); // 30초마다 점검
+    }
+    function checkDue() {
+      if (!("Notification" in window) || Notification.permission !== "granted") return;
+      const now = new Date(); let changed = false;
+      tasks.forEach(t => {
+        if (t.done || t.notified || !t.date || !t.time) return;
+        if (new Date(t.date + "T" + t.time) <= now) {
+          try { new Notification("⏰ 할 일 마감", { body: t.text + " — 마감 시간이에요!" }); } catch (e) {}
+          t.notified = true; changed = true;
+        }
+      });
+      if (changed) save();
+    }
+    function enableNotif() {
+      if (!("Notification" in window)) { alert("이 브라우저는 알림을 지원하지 않아요."); return; }
+      if (Notification.permission === "granted") { startNotifLoop(); updateNotifBtn(); alert("이미 알림이 켜져 있어요. 앱을 열어 둔 동안 마감 시간이 되면 알려드려요."); return; }
+      Notification.requestPermission().then(p => {
+        if (p === "granted") { startNotifLoop(); updateNotifBtn(); alert("알림을 켰어요! 앱(이 탭)을 열어 둔 동안 마감 시간이 되면 알려드려요."); }
+        else { alert("알림 권한이 거부됐어요. 브라우저 주소창의 자물쇠 아이콘에서 알림을 허용해 주세요."); }
+      });
+    }
+
+    /* ---------- 💾 내보내기 / 가져오기 ---------- */
+    function exportData() {
+      const blob = new Blob([JSON.stringify(tasks, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = "할일_백업_" + todayStr() + ".json"; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+    function importData(file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const arr = JSON.parse(e.target.result);
+          if (!Array.isArray(arr)) throw new Error("not array");
+          tasks = arr.map(t => ({
+            id: t.id || newId(), text: String(t.text || ""), date: t.date || "", time: t.time || "",
+            priority: t.priority || "normal", repeat: t.repeat || "none",
+            done: !!t.done, notified: !!t.notified, spawned: !!t.spawned,
+          }));
+          save(); render();
+          alert("불러왔어요! 일정 " + tasks.length + "개를 가져왔습니다.");
+        } catch (err) { alert("백업 파일을 읽을 수 없어요. 내보내기로 저장한 JSON 파일인지 확인해 주세요."); }
+      };
+      reader.readAsText(file);
     }
 
     document.getElementById("addBtn").onclick = addTask;
     document.getElementById("clearDone").onclick = clearDone;
+    document.getElementById("notifBtn").onclick = enableNotif;
+    document.getElementById("exportBtn").onclick = exportData;
+    document.getElementById("importBtn").onclick = () => document.getElementById("importFile").click();
+    document.getElementById("importFile").onchange = e => { if (e.target.files[0]) importData(e.target.files[0]); e.target.value = ""; };
     $input.addEventListener("keydown", e => { if (e.key === "Enter") addTask(); });
     document.querySelectorAll(".filter").forEach(btn => {
       btn.onclick = () => {
         filter = btn.dataset.filter;
         document.querySelectorAll(".filter").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        render();
+        btn.classList.add("active"); render();
       };
     });
 
+    updateNotifBtn();
+    if (("Notification" in window) && Notification.permission === "granted") startNotifLoop();
     render();
   </script>
 </body>
